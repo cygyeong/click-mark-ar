@@ -59,29 +59,84 @@
 
   <body style="margin: 0; overflow: hidden">
     <script>
-      AFRAME.registerComponent("locationfinder", {
-        init: function () {
-          navigator.geolocation.getCurrentPosition(function (location) {
-            console.log(location);
-          });
-        },
-      });
+      // AFRAME.registerComponent("locationfinder", {
+      //   init: function () {
+      //     navigator.geolocation.getCurrentPosition(function (location) {
+      //       console.log(location);
+      //     });
+      //   },
+      // });
+    window.onload = () => {
+    const scene = document.querySelector('a-scene');
+
+    // first get current user location
+    return navigator.geolocation.getCurrentPosition(function (position) {
+
+        // than use it to load from remote APIs some places nearby
+        loadPlaces(position.coords)
+            .then((places) => {
+                places.forEach((place) => {
+                    const latitude = place.location.lat;
+                    const longitude = place.location.lng;
+
+                    const text = document.createTreeWalker('a-text')
+                    text.setAttribute('scale','15,15')
+                    text.setAttribute('name','ssafy')
+                    text.setAttribute('gps-entity-place', `latitude: 35.20526; longitude: 126.81173;`);
+                    text.addEventListener('loaded', () => window.dispatchEvent(new CustomEvent('gps-entity-place-loaded')));
+
+                    // // add place icon
+                    // const icon = document.createElement('a-image');
+                    // icon.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
+                    // icon.setAttribute('name', place.name);
+                    // icon.setAttribute('src', '../assets/map-marker.png');
+
+                    // // for debug purposes, just show in a bigger scale, otherwise I have to personally go on places...
+                    // icon.setAttribute('scale', '20, 20');
+
+                    // icon.addEventListener('loaded', () => window.dispatchEvent(new CustomEvent('gps-entity-place-loaded')));
+
+                    const clickListener = function(ev) {
+                        ev.stopPropagation();
+                        ev.preventDefault();
+            
+                        const name = ev.target.getAttribute('name');
+            
+                        const el = ev.detail.intersection && ev.detail.intersection.object.el;
+            
+                        if (el && el === ev.target) {
+                            const label = document.createElement('span');
+                            const container = document.createElement('div');
+                            container.setAttribute('id', 'place-label');
+                            label.innerText = name;
+                            container.appendChild(label);
+                            document.body.appendChild(container);
+            
+                            setTimeout(() => {
+                                container.parentElement.removeChild(container);
+                            }, 1500);
+                        }
+                    };
+            
+                    icon.addEventListener('click', clickListener);
+
+                    scene.appendChild(icon);
+                });
+            })
+    },
+        (err) => console.error('Error in retrieving position', err),
+        {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 27000,
+        }
+    );
+};
     </script>
 
     <a-scene embedded arjs="source:webcam;sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;">
-      <a-camera
-      gps-new-camera
-        rotation-reader
-      >
+      <a-camera gps-camera="minDistance: 20;" rotation-reader>
       </a-camera>
-
-      <a-text
-        value="Patung diponogoro"
-        scale="15 15 15 "
-        look-at="[gps-camera]"
-        align="center"
-        gps-entity-place="latitude:35.20526;longitude:126.81173;"
-      ></a-text>
     </a-scene>
   </body>
 </html>
