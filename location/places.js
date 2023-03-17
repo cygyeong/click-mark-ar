@@ -19,32 +19,13 @@ window.onload = () => {
               latitude: e.detail.position.latitude + 0.001,
               longitude: e.detail.position.longitude
           });
-      const clickListener = function (ev) {
-            ev.stopPropagation();
-            ev.preventDefault();
 
-            const name = 'target'
+          const gps = ev.target.getAttribute('gps-new-entity-place');
 
-            const el = ev.detail.intersection && ev.detail.intersection.object.el;
+          entity.setAttribute('value', gps)
+   
 
-            if (el && el === ev.target) {
-                const label = document.createElement('span');
-                const container = document.createElement('div');
-                container.setAttribute('id', 'place-label');
-                label.innerText = name;
-                container.appendChild(label);
-                document.body.appendChild(container);
-
-                setTimeout(() => {
-                    container.parentElement.removeChild(container);
-                }, 1500);
-            }
-        };
-
-        entity.addEventListener('click', clickListener);
-
-
-          document.querySelector("a-scene").appendChild(entity);
+        document.querySelector("a-scene").appendChild(entity);
       }
       testEntityAdded = true;
   });
