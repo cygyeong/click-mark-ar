@@ -23,7 +23,7 @@ window.onload = () => {
             ev.stopPropagation();
             ev.preventDefault();
 
-            const name = ev.target.getAttribute('gps-new-entity-place');
+            const name = 'target'
 
             const el = ev.detail.intersection && ev.detail.intersection.object.el;
 
