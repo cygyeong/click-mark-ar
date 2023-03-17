@@ -20,7 +20,7 @@ window.onload = () => {
               longitude: e.detail.position.longitude
           });
 
-          const gps = ev.target.getAttribute('gps-new-entity-place');
+          const gps = element.getAttribute('gps-new-entity-place');
 
           entity.setAttribute('value', gps)
    
