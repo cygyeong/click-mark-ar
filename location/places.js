@@ -34,7 +34,6 @@ function renderPlaces(places) {
       `latitude: ${latitude}; longitude: ${longitude}`
     );
     text.setAttribute("name", place.name);
-    text.setAttribute("src", "../assets/map-marker.png");
 
     // for debug purposes, just show in a bigger scale, otherwise I have to personally go on places...
     text.setAttribute("scale", "20, 20");
