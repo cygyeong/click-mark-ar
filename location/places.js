@@ -11,7 +11,7 @@ window.onload = () => {
 function staticLoadPlaces() {
   return [
     {
-      name: "Your place name",
+      name: "ssafy",
       location: {
         lat: 35.20526, // add here latitude if using static data
         lng: 126.81173, // add here longitude if using static data
@@ -66,6 +66,6 @@ function renderPlaces(places) {
 
     text.addEventListener("click", clickListener);
 
-    scene.appendChild(icon);
+    scene.appendChild(text);
   });
 }
