@@ -19,12 +19,8 @@ window.onload = () => {
               latitude: e.detail.position.latitude + 0.001,
               longitude: e.detail.position.longitude
           });
-
-          const gps = element.getAttribute('gps-new-entity-place');
-
-          entity.setAttribute('value', gps)
-   
-
+          
+          console.log(element.getAttribute('gps-new-entity-place'))
         document.querySelector("a-scene").appendChild(entity);
       }
       testEntityAdded = true;
