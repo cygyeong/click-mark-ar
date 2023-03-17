@@ -1,142 +1,32 @@
-<!-- <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>GeoAR.js demo</title>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
-  </head>
-
-  <body style="margin: 0; overflow: hidden">
-    <script>
-      AFRAME.registerComponent("locationfinder", {
-        init: function () {
-          navigator.geolocation.getCurrentPosition(function (location) {
-            console.log(location);
-          });
-        },
-      });
-    </script>
-
-    <a-scene embedded arjs="source:webcam;sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;">
-      <a-camera
-      gps-camera="simulateLatitude:35.2102;simulateLongitude:126.8238"
-      rotation-reader
-      >
-      </a-camera>
-      <a-text
-      value="도천저수지"
-      scale="15 15 15 "
-      look-at="[gps-camera]"
-      align="center"
-      gps-entity-place="latitude:35.2102;longitude:126.8238;"
-      ></a-text>
-      <a-text
-      value="첨성대"
-      scale="15 15 15 "
-      look-at="[gps-camera]"
-      align="center"
-      gps-entity-place="latitude:35.8347 ;longitude:129.2190;"
-      ></a-text>
-    </a-scene>
-  </body>
-</html> -->
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <title>GeoAR.js demo</title>
+    
+    <!-- import aframe and AR.js -->
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
-  </head>
-
-  <body style="margin: 0; overflow: hidden">
     <script>
-      // AFRAME.registerComponent("locationfinder", {
-      //   init: function () {
-      //     navigator.geolocation.getCurrentPosition(function (location) {
-      //       console.log(location);
-      //     });
-      //   },
-      // });
-    window.onload = () => {
-    const scene = document.querySelector('a-scene');
-
-    // first get current user location
-    return navigator.geolocation.getCurrentPosition(function (position) {
-
-        // than use it to load from remote APIs some places nearby
-        loadPlaces(position.coords)
-            .then((places) => {
-                places.forEach((place) => {
-                    const latitude = place.location.lat;
-                    const longitude = place.location.lng;
-
-                    const text = document.createTreeWalker('a-text')
-                    text.setAttribute('scale','15,15')
-                    text.setAttribute('name','ssafy')
-                    text.setAttribute('gps-entity-place', `latitude: 35.20526; longitude: 126.81173;`);
-                    text.addEventListener('loaded', () => window.dispatchEvent(new CustomEvent('gps-entity-place-loaded')));
-
-                    // // add place icon
-                    // const icon = document.createElement('a-image');
-                    // icon.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-                    // icon.setAttribute('name', place.name);
-                    // icon.setAttribute('src', '../assets/map-marker.png');
-
-                    // // for debug purposes, just show in a bigger scale, otherwise I have to personally go on places...
-                    // icon.setAttribute('scale', '20, 20');
-
-                    // icon.addEventListener('loaded', () => window.dispatchEvent(new CustomEvent('gps-entity-place-loaded')));
-
-                    const clickListener = function(ev) {
-                        ev.stopPropagation();
-                        ev.preventDefault();
-            
-                        const name = ev.target.getAttribute('name');
-            
-                        const el = ev.detail.intersection && ev.detail.intersection.object.el;
-            
-                        if (el && el === ev.target) {
-                            const label = document.createElement('span');
-                            const container = document.createElement('div');
-                            container.setAttribute('id', 'place-label');
-                            label.innerText = name;
-                            container.appendChild(label);
-                            document.body.appendChild(container);
-            
-                            setTimeout(() => {
-                                container.parentElement.removeChild(container);
-                            }, 1500);
-                        }
-                    };
-            
-                    icon.addEventListener('click', clickListener);
-
-                    scene.appendChild(icon);
-                });
-            })
-    },
-        (err) => console.error('Error in retrieving position', err),
-        {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 27000,
-        }
-    );
-};
+        THREEx.ArToolkitContext.baseURL = 'https://raw.githack.com/jeromeetienne/ar.js/master/three.js/'
     </script>
+</head>
 
-    <a-scene embedded arjs="source:webcam;sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;">
-      <a-camera gps-camera="minDistance: 20;" rotation-reader>
-      </a-camera>
-    </a-scene>
-  </body>
-</html>
+<!-- Dynamically add places from Javascript -->
+<script src="./places.js"></script>
+
+<body style='margin: 0; overflow: hidden;'>
+    <a-scene
+        cursor='rayOrigin: mouse; fuse: true; fuseTimeout: 0;'
+        raycaster="objects: [gps-entity-place];"
+        vr-mode-ui="enabled: false"
+		embedded
+		arjs='sourceType: webcam; sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;'>
+
+        <a-camera gps-camera="minDistance: 20;" rotation-reader>
+		</a-camera>
+	</a-scene>
+</body>
