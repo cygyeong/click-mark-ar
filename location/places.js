@@ -1,66 +1,72 @@
+window.onload = () => {
+  // if you want to statically add places, de-comment following line
+  let method = "static";
 
-const loadPlaces = function(coords) {
-  // fetch data from user coords using external APIs, or simply add places data statically
-  // please look at GeoAR.js repository on examples/click-places/places.js for full code
+  if (method === "static") {
+    let places = staticLoadPlaces();
+    renderPlaces(places);
+  }
+};
+
+function staticLoadPlaces() {
+  return [
+    {
+      name: "Your place name",
+      location: {
+        lat: 35.20526, // add here latitude if using static data
+        lng: 126.81173, // add here longitude if using static data
+      },
+    },
+  ];
 }
 
-window.onload = () => {
-    const scene = document.querySelector('a-scene');
+function renderPlaces(places) {
+  let scene = document.querySelector("a-scene");
 
-    // first get current user location
-    return navigator.geolocation.getCurrentPosition(function (position) {
+  places.forEach((place) => {
+    const latitude = place.location.lat;
+    const longitude = place.location.lng;
 
-        // than use it to load from remote APIs some places nearby
-        loadPlaces(position.coords)
-            .then((places) => {
-                places.forEach((place) => {
-                    const latitude = place.location.lat;
-                    const longitude = place.location.lng;
-
-                    // add place icon
-                    const icon = document.createElement('a-text');
-                    icon.setAttribute('gps-entity-place', `latitude: ${latitude}; longitude: ${longitude};`);
-                    icon.setAttribute('name', place.name);
-                    // icon.setAttribute('src', '../assets/map-marker.png');
-
-                    // for debug purposes, just show in a bigger scale, otherwise I have to personally go on places...
-                    icon.setAttribute('scale', '20, 20');
-
-                    icon.addEventListener('loaded', () => window.dispatchEvent(new CustomEvent('gps-entity-place-loaded')));
-
-                    const clickListener = function(ev) {
-                        ev.stopPropagation();
-                        ev.preventDefault();
-            
-                        const name = ev.target.getAttribute('name');
-            
-                        const el = ev.detail.intersection && ev.detail.intersection.object.el;
-            
-                        if (el && el === ev.target) {
-                            const label = document.createElement('span');
-                            const container = document.createElement('div');
-                            container.setAttribute('id', 'place-label');
-                            label.innerText = name;
-                            container.appendChild(label);
-                            document.body.appendChild(container);
-            
-                            setTimeout(() => {
-                                container.parentElement.removeChild(container);
-                            }, 1500);
-                        }
-                    };
-            
-                    icon.addEventListener('click', clickListener);
-
-                    scene.appendChild(icon);
-                });
-            })
-    },
-        (err) => console.error('Error in retrieving position', err),
-        {
-            enableHighAccuracy: true,
-            maximumAge: 0,
-            timeout: 27000,
-        }
+    // add place icon
+    const text = document.createElement("a-text");
+    text.setAttribute(
+      "gps-entity-place",
+      `latitude: ${latitude}; longitude: ${longitude}`
     );
-};
+    text.setAttribute("name", place.name);
+    text.setAttribute("src", "../assets/map-marker.png");
+
+    // for debug purposes, just show in a bigger scale, otherwise I have to personally go on places...
+    text.setAttribute("scale", "20, 20");
+
+    text.addEventListener("loaded", () =>
+      window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"))
+    );
+
+    const clickListener = function (ev) {
+      ev.stopPropagation();
+      ev.preventDefault();
+
+      const name = ev.target.getAttribute("name");
+
+      const el = ev.detail.intersection && ev.detail.intersection.object.el;
+
+      if (el && el === ev.target) {
+        const label = document.createElement("span");
+        const container = document.createElement("div");
+        container.setAttribute("id", "place-label");
+        label.innerText = name;
+        container.appendChild(label);
+        document.body.appendChild(container);
+
+        setTimeout(() => {
+          container.parentElement.removeChild(container);
+        }, 1500);
+      }
+    };
+
+    text.addEventListener("click", clickListener);
+
+    scene.appendChild(icon);
+  });
+}
