@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>GeoAR.js demo</title>
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
     <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
@@ -23,23 +23,16 @@
 
     <a-scene embedded arjs="source:webcam;sourceWidth:1280; sourceHeight:960; displayWidth: 1280; displayHeight: 960; debugUIEnabled: false;">
       <a-camera
-        gps-camera="simulateLatitude:35.2053 ;simulateLongitude:126.8118"
-        rotation-reader
+      gps-camera="simulateLatitude:35.2102;simulateLongitude:126.8238"
+      rotation-reader
       >
       </a-camera>
-      <a-text
-        value="SSAFY"
-        scale="15 15 15 "
-        look-at="[gps-camera]"
-        align="center"
-        gps-entity-place="latitude:35.2023 ;longitude:126.8098;"
-      ></a-text>
       <a-text
       value="도천저수지"
       scale="15 15 15 "
       look-at="[gps-camera]"
       align="center"
-      gps-entity-place="latitude:35.2102   ;longitude:126.8238;"
+      gps-entity-place="latitude:35.2102;longitude:126.8238;"
       ></a-text>
       <a-text
       value="첨성대"
