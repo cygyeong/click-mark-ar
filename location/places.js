@@ -20,8 +20,11 @@ window.onload = () => {
               longitude: e.detail.position.longitude
           });
           
-          console.log(element.getAttribute('gps-new-entity-place'))
+      
         document.querySelector("a-scene").appendChild(entity);
+        const GPS = document.createElement('sapn')
+        GPS.value = 'hi'
+        document.appendChild(GPS)
       }
       testEntityAdded = true;
   });
