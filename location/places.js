@@ -1,71 +1,25 @@
 window.onload = () => {
-  // if you want to statically add places, de-comment following line
-  let method = "static";
+  let testEntityAdded = false;
 
-  if (method === "static") {
-    let places = staticLoadPlaces();
-    renderPlaces(places);
-  }
-};
+  const el = document.querySelector("[gps-new-camera]");
 
-function staticLoadPlaces() {
-  return [
-    {
-      name: "ssafy",
-      location: {
-        lat: 35.20526, // add here latitude if using static data
-        lng: 126.81173, // add here longitude if using static data
-      },
-    },
-  ];
-}
-
-function renderPlaces(places) {
-  let scene = document.querySelector("a-scene");
-
-  places.forEach((place) => {
-    const latitude = place.location.lat;
-    const longitude = place.location.lng;
-
-    // add place icon
-    const text = document.createElement("a-text");
-    text.setAttribute(
-      "gps-entity-place",
-      `latitude: ${latitude}; longitude: ${longitude}`
-    );
-    text.setAttribute("name", place.name);
-
-    // for debug purposes, just show in a bigger scale, otherwise I have to personally go on places...
-    text.setAttribute("scale", "20, 20");
-
-    text.addEventListener("loaded", () =>
-      window.dispatchEvent(new CustomEvent("gps-entity-place-loaded"))
-    );
-
-    const clickListener = function (ev) {
-      ev.stopPropagation();
-      ev.preventDefault();
-
-      const name = ev.target.getAttribute("name");
-
-      const el = ev.detail.intersection && ev.detail.intersection.object.el;
-
-      if (el && el === ev.target) {
-        const label = document.createElement("span");
-        const container = document.createElement("div");
-        container.setAttribute("id", "place-label");
-        label.innerText = name;
-        container.appendChild(label);
-        document.body.appendChild(container);
-
-        setTimeout(() => {
-          container.parentElement.removeChild(container);
-        }, 1500);
+  el.addEventListener("gps-camera-update-position", e => {
+      if(!testEntityAdded) {
+          alert(`Got first GPS position: lon ${e.detail.position.longitude} lat ${e.detail.position.latitude}`);
+          // Add a box to the north of the initial GPS position
+          const entity = document.createElement("a-box");
+          entity.setAttribute("scale", {
+              x: 20, 
+              y: 20,
+              z: 20
+          });
+          entity.setAttribute('material', { color: 'red' } );
+          entity.setAttribute('gps-new-entity-place', {
+              latitude: e.detail.position.latitude + 0.001,
+              longitude: e.detail.position.longitude
+          });
+          document.querySelector("a-scene").appendChild(entity);
       }
-    };
-
-    text.addEventListener("click", clickListener);
-
-    scene.appendChild(text);
+      testEntityAdded = true;
   });
-}
+};
